@@ -2,7 +2,13 @@ class PostsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    render 'posts/index'
+    @title = params[:title]
+    if @title.present?
+      @posts = Post.where('title LIKE ?', "%#{@title}%")
+    else
+      @posts = Post.all
+    end
+    render :index
   end
 
   def new
@@ -12,6 +18,8 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
+    puts "====================================================="
+    puts @post
 
     if params[:post][:image]
       @post.image.attach(params[:post][:image])
